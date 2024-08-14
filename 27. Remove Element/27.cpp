@@ -14,6 +14,10 @@ int RemoveElement(vector<int> nums, int val)
             i--;
         }
     }
+    for (int i = 0; i < nums.size(); i++)
+    {
+        cout << nums[i] << " ";
+    }
     return nums.size();
 }
 int main()
