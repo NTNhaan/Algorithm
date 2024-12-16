@@ -5,26 +5,16 @@ vector<int> productExceptSelf(vector<int> &nums)
 {
     int n = nums.size();
     vector<int> ans;
-    int i = 0;
-    while (i < n)
+    for (int i = 0; i < n; i++)
     {
-        if (nums[i] == 0)
+        int tmp = 1;
+        for (int j = 0; j < n; j++)
         {
-            ans.push_back(0);
-            i++;
+            if (j == i)
+                continue;
+            tmp = tmp * nums[j];
         }
-        else
-        {
-            int tmp = 1;
-            for (auto j : nums)
-            {
-                if (j == nums[i])
-                    continue;
-                tmp = tmp * j;
-            }
-            ans.push_back(tmp);
-            i++;
-        }
+        ans.push_back(tmp);
     }
     return ans;
 }
@@ -45,6 +35,7 @@ vector<int> anotherSolution(vector<int> &nums)
     }
     return ans;
 }
+
 int main()
 {
     int n;
@@ -56,7 +47,7 @@ int main()
         cin >> x;
         nums.push_back(x);
     }
-    vector<int> ans = anotherSolution(nums);
+    vector<int> ans = productExceptSelf(nums);
     for (auto x : ans)
     {
         cout << x << " ";

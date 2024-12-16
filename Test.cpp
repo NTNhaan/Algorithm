@@ -245,3 +245,131 @@ private
         });
     }
 }
+
+
+
+
+
+
+   private void initBestFoods() {
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Foods");
+        binding.progressBarBestFood.setVisibility(View.VISIBLE);
+        ArrayList<Foods> list = new ArrayList<>();
+        Query query = myRef.orderByChild("BestFood").equalTo(true);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("FirebaseDataSnapShot", "DataSnapshot: " + snapshot.toString()); // Log toàn bộ snapshot
+                if (snapshot.exists()) {
+                    for (DataSnapshot issue : snapshot.getChildren()) {
+                        Foods food = issue.getValue(Foods.class);
+                        if (food != null && food.isBestFood()) {
+                            Log.d("FoodItem", "Added to list: " + food.getTitle());
+                            list.add(food);
+                        }
+                    }
+                    binding.bestFoodView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                    RecyclerView.Adapter adapter = new BestFoodsAdapter(list);
+                    binding.bestFoodView.setAdapter(adapter);
+                }
+                binding.progressBarBestFood.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseData", "Database Error: " + error.getMessage());
+            }
+        });
+    }
+
+
+    public void onBindViewHolder(@NonNull FoodListAdapter.viewholder holder, int position) {
+        holder.titleTxt.setText(items.get(position).getTitle());
+        holder.timeTxt.setText(items.get(position).getTimeValue()+" min");
+        holder.priceTxt.setText("$" + items.get(position).getPrice());
+        holder.rateTxt.setText(""+ items.get(position).getStar());
+
+        Glide.with(context)
+                .load(items.get(position).getImagePath())
+                .transform(new CenterCrop(), new RoundedCorners(30))
+                .into(holder.pic);
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("object", items.get(position));
+            context.startActivity(intent);
+        });
+    }
+    public void onBindViewHolder(@NonNull FoodListAdapter.viewholder holder, int position) {
+        holder.titleTxt.setText(items.get(position).getTitle());
+        holder.timeTxt.setText(items.get(position).getTimeValue()+" min");
+        holder.priceTxt.setText("$" + items.get(position).getPrice());
+        holder.rateTxt.setText(""+ items.get(position).getStar());
+
+        Glide.with(context)
+                .load(items.get(position).getImagePath())
+                .transform(new CenterCrop(), new RoundedCorners(30))
+                .into(holder.pic);
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailActivity.class);
+            intent.putExtra("object", items.get(position));
+            context.startActivity(intent);
+        });
+    }
+
+    private void initList() {
+        DatabaseReference myRef=database.getReference("Foods");
+        binding.progressBar.setVisibility(View.VISIBLE);
+        ArrayList<Foods> list = new ArrayList<>();
+        Query query;
+        if(isSearch)
+        {
+            query=myRef.orderByChild("Title").startAt(searchText).endAt(searchText + '\uf8ff');
+        }
+        else
+        {
+            query=myRef.orderByChild("CategoryId").equalTo(categoryId);
+        }
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    for(DataSnapshot issue : snapshot.getChildren()){
+                        list.add(issue.getValue(Foods.class));
+                    }
+                    if(list.size()>0)
+                    {
+                        binding.foodListMenu.setLayoutManager(new GridLayoutManager(MenuActivity.this, 2));
+                        adapterListFood = new FoodListAdapter(list);
+                        binding.foodListMenu.setAdapter(adapterListFood);
+                    }
+                    binding.progressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+
+        private void calculateCart() {
+        double percentTax = 0.02; // percent 2% tax
+        double delivery = 10; // 10 Dollars delivery fee
+
+        double totalFee = 0;
+        for (Foods food : cartList) {
+            totalFee += food.getPrice() * food.getNumberInCart();
+        }
+
+        double tax = Math.round(totalFee * percentTax * 100.0) / 100;
+        double total = Math.round((totalFee + tax + delivery) * 100) / 100;
+
+        binding.totalFeeTxt.setText("$" + Math.round(totalFee * 100.0) / 100);
+        binding.taxTxt.setText("$" + tax);
+        binding.deliveryTxt.setText("$" + delivery);
+        binding.totalTxt.setText("$" + total);
+    }
