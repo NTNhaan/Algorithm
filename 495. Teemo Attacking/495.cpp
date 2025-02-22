@@ -16,9 +16,6 @@ int findPoisonedDuration(vector<int> &timeSeries, int duration)
     }
     return ans + duration;
 }
-int anotherWay(vector<int> &timeSeries, int duration)
-{
-}
 int main()
 {
     int n, duration;
