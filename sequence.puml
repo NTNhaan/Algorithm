@@ -1,0 +1,23 @@
+@startuml
+actor Player
+
+Player -> UIManager : Chọn viên đá 1
+UIManager -> GameManager : Gửi tọa độ viên đá 1
+Player -> UIManager : Chọn viên đá 2
+UIManager -> GameManager : Gửi tọa độ viên đá 2
+
+GameManager -> Board : SwapPiece(p1, p2)
+Board -> Piece : Trao đổi vị trí
+
+Board -> Board : CheckMatch()
+alt Có match
+    Board -> Board : ClearMatches()
+    Board -> Board : DropNewPieces()
+    Board -> GameManager : Cập nhật điểm
+else Không có match
+    Board -> Board : SwapPiece(p1, p2) // hoàn tác
+end
+
+GameManager -> UIManager : Cập nhật UI
+
+@enduml

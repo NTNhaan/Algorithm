@@ -1,0 +1,54 @@
+@startuml
+
+class GameManager {
+  - instance : GameManager
+  + StartGame()
+  + ResetGame()
+  + EndGame()
+}
+
+class Board {
+  - grid : Piece[][]
+  + InitBoard()
+  + CheckMatch()
+  + SwapPiece(p1, p2)
+  + ClearMatches()
+}
+
+class Piece {
+  - color : string
+  - type : string
+  + AnimateDestroy()
+  + FallDown()
+}
+
+class Player {
+  - score : int
+  + MakeMove()
+  + GetScore()
+}
+
+class AIPlayer extends Player {
+  + CalculateMove()
+}
+
+class MLAgentController {
+  + CollectObservations()
+  + OnActionReceived()
+  + Heuristic()
+}
+
+class UIManager {
+  + ShowScore()
+  + ShowMenu()
+  + UpdateUI()
+}
+
+GameManager --> Board
+GameManager --> Player
+GameManager --> AIPlayer
+GameManager --> UIManager
+AIPlayer --> MLAgentController
+Board --> Piece
+
+@enduml

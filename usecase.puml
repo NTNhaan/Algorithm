@@ -1,0 +1,71 @@
+@startuml
+
+entity User {
+  + user_id : UUID <<PK>>
+  username : string
+  email : string
+  password_hash : string
+}
+
+entity Movie {
+  + movie_id : UUID <<PK>>
+  title : string
+  overview : text
+  release_date : date
+  genre : string
+  poster_url : string
+  tmdb_id : int
+}
+
+entity Rating {
+  + rating_id : UUID <<PK>>
+  user_id : UUID <<FK>>
+  movie_id : UUID <<FK>>
+  score : float
+  created_at : datetime
+}
+
+entity Review {
+  + review_id : UUID <<PK>>
+  user_id : UUID <<FK>>
+  movie_id : UUID <<FK>>
+  content : text
+  created_at : datetime
+}
+
+entity Comment {
+  + comment_id : UUID <<PK>>
+  user_id : UUID <<FK>>
+  movie_id : UUID <<FK>>
+  message : text
+  created_at : datetime
+}
+
+entity WatchedList {
+  + id : UUID <<PK>>
+  user_id : UUID <<FK>>
+  movie_id : UUID <<FK>>
+  watched_at : datetime
+}
+
+entity RecentlyViewed {
+  + id : UUID <<PK>>
+  user_id : UUID <<FK>>
+  movie_id : UUID <<FK>>
+  viewed_at : datetime
+}
+
+' Relationships
+User ||--o{ Rating : rates
+User ||--o{ Review : writes
+User ||--o{ Comment : comments
+User ||--o{ WatchedList : watches
+User ||--o{ RecentlyViewed : views
+
+Movie ||--o{ Rating : has
+Movie ||--o{ Review : reviewed_in
+Movie ||--o{ Comment : commented_in
+Movie ||--o{ WatchedList : listed_in
+Movie ||--o{ RecentlyViewed : seen_in
+
+@enduml
